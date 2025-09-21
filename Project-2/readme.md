@@ -49,5 +49,4 @@ This is the second phase of my EKS learning project series, where I deployed a s
 - Difference between `Service (LoadBalancer)` and `Ingress Resource`.  
 - How Helm simplifies deploying controllers in Kubernetes.
 
-For detailed explanation please go through my blog on Hashnode
-https://shivtrent.hashnode.dev/exposing-kubernetes-pods-to-internet-with-aws-load-balancer-controller-on-eks-using-loadbalancer-service-and-ingress
+For detailed explanation please go through my blog on [Hashnode](https://shivtrent.hashnode.dev/exposing-kubernetes-pods-to-internet-with-aws-load-balancer-controller-on-eks-using-loadbalancer-service-and-ingress)
