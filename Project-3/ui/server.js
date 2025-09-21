@@ -4,7 +4,7 @@ const handler = require('serve-handler');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 
-const API_URL = 'http://api';
+const API_URL = 'http://api:5000';
 
 const server = http.createServer((req, res) => {
   // Check if the request is for the API

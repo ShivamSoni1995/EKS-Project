@@ -1,0 +1,14 @@
+services:
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    container_name: bookapp-api
+
+  ui:
+    build: ./ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    container_name: bookapp-ui

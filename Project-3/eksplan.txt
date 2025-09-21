@@ -1,0 +1,195 @@
+AMAZON EKS DEPLOYMENT PLAN FOR BOOKAPP PROJECT
+==============================================
+
+## Phase 1: Prerequisites & Setup
+
+### 1.1 AWS Account & Tools
+- AWS account with appropriate permissions
+- Install AWS CLI and configure credentials
+- Install `kubectl` for Kubernetes management
+- Install `eksctl` for EKS cluster management
+- Install Helm (optional, for package management)
+
+### 1.2 Container Registry
+- ✅ Already Done: Images pushed to Docker Hub
+- Alternative: Push to Amazon ECR for better integration
+
+## Phase 2: EKS Cluster Setup
+
+### 2.1 Create EKS Cluster
+- Create VPC and networking (or use default)
+- Create EKS cluster with managed node groups
+- Configure worker nodes (t3.medium recommended for start)
+- Set up cluster autoscaling (optional)
+
+### 2.2 Cluster Configuration
+- Configure `kubectl` to connect to EKS cluster
+- Install AWS Load Balancer Controller
+- Set up cluster monitoring (CloudWatch Container Insights)
+
+## Phase 3: Kubernetes Manifests
+
+### 3.1 Core Application Resources
+k8s/
+├── namespace.yaml
+├── api/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── configmap.yaml
+├── ui/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── configmap.yaml
+└── ingress.yaml
+
+### 3.2 Persistent Storage (if needed)
+- Create StorageClass for EBS volumes
+- PersistentVolumeClaim for database
+- Database deployment (PostgreSQL)
+
+### 3.3 Networking & Exposure
+- ClusterIP services for internal communication
+- LoadBalancer or Ingress for external access
+- Network policies for security
+
+## Phase 4: Configuration Management
+
+### 4.1 Environment Configuration
+- ConfigMaps for application settings
+- Secrets for sensitive data (DB passwords, API keys)
+- Environment-specific configurations
+
+### 4.2 Resource Management
+- Resource requests and limits
+- Horizontal Pod Autoscaler (HPA)
+- Pod Disruption Budgets
+
+## Phase 5: Deployment Strategy
+
+### 5.1 Deployment Options
+Option A: kubectl apply
+kubectl apply -f k8s/
+
+Option B: Helm Charts
+helm install bookapp ./helm-chart
+
+Option C: GitOps with ArgoCD/Flux
+- Automated deployments from Git repository
+
+### 5.2 Rolling Updates
+- Blue-green deployments
+- Canary deployments
+- Rollback strategies
+
+## Phase 6: Observability & Monitoring
+
+### 6.1 Logging
+- Fluent Bit for log collection
+- CloudWatch Logs integration
+- Centralized logging dashboard
+
+### 6.2 Monitoring
+- Prometheus + Grafana (or CloudWatch)
+- Application metrics
+- Infrastructure monitoring
+
+### 6.3 Health Checks
+- Liveness and readiness probes
+- Health check endpoints in applications
+
+## Phase 7: Security & Best Practices
+
+### 7.1 Security
+- IAM roles for service accounts (IRSA)
+- Pod security standards
+- Network policies
+- Image vulnerability scanning
+
+### 7.2 Secrets Management
+- AWS Secrets Manager integration
+- External Secrets Operator
+- Encrypted storage
+
+## Phase 8: CI/CD Pipeline
+
+### 8.1 Build Pipeline
+GitHub/GitLab → Build Images → Push to ECR → Update K8s Manifests
+
+### 8.2 Deployment Pipeline
+- Automated testing
+- Staging environment
+- Production deployment
+- Rollback capabilities
+
+## Phase 9: Cost Optimization
+
+### 9.1 Resource Optimization
+- Right-sizing instances
+- Spot instances for non-critical workloads
+- Cluster autoscaling
+- Vertical Pod Autoscaler
+
+### 9.2 Monitoring Costs
+- AWS Cost Explorer
+- Resource tagging
+- Budget alerts
+
+## Phase 10: Disaster Recovery
+
+### 10.1 Backup Strategy
+- Database backups
+- Configuration backups
+- Cross-region considerations
+
+### 10.2 High Availability
+- Multi-AZ deployment
+- Load balancing
+- Failover procedures
+
+## Recommended Deployment Architecture
+
+Internet → ALB (Ingress) → EKS Cluster
+                           ├── UI Pods (3 replicas)
+                           ├── API Pods (3 replicas)
+                           └── Database Pod + EBS Volume
+
+## Estimated Timeline
+
+Phase                   | Duration  | Complexity
+------------------------|-----------|------------
+Prerequisites           | 1 day     | Low
+EKS Setup              | 1-2 days  | Medium
+K8s Manifests          | 2-3 days  | Medium
+Deployment             | 1 day     | Low
+Monitoring/Security    | 2-3 days  | High
+CI/CD                  | 3-5 days  | High
+
+## Cost Considerations
+
+Monthly Estimates:
+- EKS Control Plane: ~$73
+- Worker Nodes (2x t3.medium): ~$60
+- Load Balancer: ~$20
+- Storage (EBS): ~$10
+- Total: ~$163/month
+
+## Next Steps Priority
+
+1. Start with: EKS cluster creation
+2. Then: Basic Kubernetes manifests
+3. Deploy: Simple version first
+4. Iterate: Add monitoring, security, CI/CD
+
+## Current Project Status
+- ✅ Docker images built and tested locally
+- ✅ Images pushed to Docker Hub (shivamsoni1995/bookapp-api, shivamsoni1995/bookapp-ui)
+- ✅ Multi-stage Docker builds implemented
+- ✅ Container networking configured and tested
+- ⏳ Ready for Kubernetes deployment
+
+## Key Considerations for BookApp
+- Current setup uses in-memory storage (mock_cart)
+- No persistent volumes in current Docker setup
+- API proxy configured in UI container (server.js)
+- Images are publicly available on Docker Hub
+- Application tested and working on ports 3000 (UI) and 5000 (API)
